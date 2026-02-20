@@ -1,0 +1,33 @@
+name: Build LaTeX PDF
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Compile LaTeX with LuaLaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          latexmk_use_lualatex: true
+          args: >
+            -interaction=nonstopmode
+            -file-line-error
+            -outdir=output
+          root_file: src/main.tex
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-pdf
+          path: output/main.pdf

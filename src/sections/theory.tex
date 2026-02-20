@@ -1,0 +1,49 @@
+\section{TCPとUDPの比較}
+
+\subsection{概要}
+
+\begin{table}[H]
+\centering
+\caption{TCPとUDPの比較}
+\begin{tabular}{lcc}
+\toprule
+項目 & TCP & UDP \\
+\midrule
+接続方式 & コネクション型 & コネクションレス型 \\
+信頼性 & 高 & 低 \\
+遅延 & 高 & 低 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{通信イメージ図}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{tcp_udp.png}
+\caption{TCPとUDP通信イメージ}
+\end{figure}
+
+\subsection{遅延グラフ}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+ybar,
+symbolic x coords={TCP,UDP},
+xtick=data,
+ylabel={遅延(ms)},
+nodes near coords
+]
+\addplot coordinates {(TCP,50) (UDP,20)};
+\end{axis}
+\end{tikzpicture}
+\caption{遅延比較}
+\end{figure}
+
+\section{数式モデル}
+
+\[
+T = T_{prop} + T_{trans} + T_{queue}
+\]

@@ -1,0 +1,50 @@
+\documentclass[a4paper,11pt]{article}
+
+% 日本語
+\usepackage{luatexja}
+
+% レイアウト
+\usepackage{geometry}
+\geometry{margin=25mm}
+
+% 数式
+\usepackage{amsmath,amssymb}
+
+% 図表
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% 索引
+\usepackage{makeidx}
+\makeindex
+
+% パス設定（重要）
+\graphicspath{{images/}}
+
+\title{TCP/IPネットワーク基礎と通信性能の考察}
+\author{Koichi Kurita}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\input{src/sections/intro}
+\input{src/sections/theory}
+\input{src/sections/conclusion}
+
+\newpage
+\begin{thebibliography}{9}
+\bibitem{rfc793} J. Postel, RFC793, 1981.
+\bibitem{rfc768} J. Postel, RFC768, 1980.
+\end{thebibliography}
+
+\newpage
+\printindex
+
+\end{document}
