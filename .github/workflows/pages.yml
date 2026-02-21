@@ -1,0 +1,47 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          latexmk_use_lualatex: true
+          args: -interaction=nonstopmode -file-line-error -outdir=output
+          root_file: src/main.tex
+
+      - name: Create index.html
+        run: |
+          echo '<!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>LaTeX Portfolio</title>
+            <style>
+              body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; }
+              a { font-size: 20px; text-decoration: none; color: #0366d6; }
+            </style>
+          </head>
+          <body>
+            <h1>LaTeX Technical Portfolio</h1>
+            <p><a href="main.pdf">📘 View / Download PDF</a></p>
+          </body>
+          </html>' > output/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output

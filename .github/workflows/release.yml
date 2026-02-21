@@ -1,0 +1,32 @@
+name: Build and Release PDF
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          latexmk_use_lualatex: true
+          args: -interaction=nonstopmode -file-line-error -outdir=output
+          root_file: src/main.tex
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest Build
+          files: output/main.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
