@@ -1,0 +1,51 @@
+# =========================
+# LaTeX build artifacts
+# =========================
+
+# Auxiliary files
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.bbl
+*.blg
+*.ilg
+*.ind
+*.idx
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+
+# =========================
+# Output directory
+# =========================
+
+output/
+
+# =========================
+# Temporary files
+# =========================
+
+*.tmp
+*.bak
+*.swp
+*~
+
+# =========================
+# OS files
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+# VS Code
+# =========================
+
+.vscode/
