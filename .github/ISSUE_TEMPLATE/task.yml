@@ -1,0 +1,23 @@
+name: タスク
+description: 改善タスク（Step の作業単位）
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・目的
+    validations:
+      required: true
+  - type: textarea
+    id: todo
+    attributes:
+      label: やること
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+    validations:
+      required: true
