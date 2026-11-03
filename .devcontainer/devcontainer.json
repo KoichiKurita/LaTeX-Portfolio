@@ -1,0 +1,34 @@
+{
+  "name": "LaTeX Portfolio",
+  "build": { "dockerfile": "Dockerfile" },
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "james-yu.latex-workshop",
+        "editorconfig.editorconfig",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "files.encoding": "utf8",
+        "files.eol": "\n",
+        // ビルドは Makefile に一本化（人・エディタ・CIで同じ入口を使う）
+        "latex-workshop.latex.tools": [
+          { "name": "make", "command": "make", "args": ["-C", "%WORKSPACE_FOLDER%", "build"] }
+        ],
+        "latex-workshop.latex.recipes": [
+          { "name": "make build", "tools": ["make"] }
+        ],
+        "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/output",
+        "latex-workshop.latex.autoBuild.run": "onSave",
+        "latex-workshop.latex.autoClean.run": "never",
+        "latex-workshop.view.pdf.viewer": "tab"
+      }
+    }
+  },
+  "postCreateCommand": "lualatex --version | head -1 && latexmk -v | head -2"
+}

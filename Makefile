@@ -17,6 +17,7 @@ build:
 	@echo "=== Building LaTeX document ==="
 	@mkdir -p $(OUTDIR)
 	$(LATEXMK) -lualatex \
+	-synctex=1 \
 	-interaction=nonstopmode \
 	-file-line-error \
 	-outdir=$(OUTDIR) \
