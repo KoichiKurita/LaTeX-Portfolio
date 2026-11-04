@@ -1,12 +1,17 @@
 % !TEX root = ../main.tex
 
 \section{TCPとUDPの比較}
+\label{sec:compare}
 
 \subsection{概要}
+\label{sec:overview}
+
+TCPとUDPの主な違いを\cref{tab:tcp-udp}に示す。
 
 \begin{table}[H]
 \centering
 \caption{TCPとUDPの比較}
+\label{tab:tcp-udp}
 \begin{tabular}{lcc}
 \toprule
 項目 & TCP & UDP \\
@@ -19,14 +24,21 @@
 \end{table}
 
 \subsection{通信イメージ図}
+\label{sec:image}
+
+TCPとUDPの通信の流れを\cref{fig:tcp-udp}に示す。
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\linewidth]{tcp_udp.png}
 \caption{TCPとUDP通信イメージ}
+\label{fig:tcp-udp}
 \end{figure}
 
 \subsection{遅延グラフ}
+\label{sec:latency}
+
+TCPとUDPの遅延の比較を\cref{fig:latency}に示す。
 
 \begin{figure}[H]
 \centering
@@ -42,10 +54,18 @@ nodes near coords
 \end{axis}
 \end{tikzpicture}
 \caption{遅延比較}
+\label{fig:latency}
 \end{figure}
 
 \section{数式モデル}
+\label{sec:model}
 
-\[
-T = T_{prop} + T_{trans} + T_{queue}
-\]
+通信全体の遅延$T$は、\cref{eq:delay}のように各遅延の和で表される。
+
+\begin{equation}
+  T = T_{\mathrm{prop}} + T_{\mathrm{trans}} + T_{\mathrm{queue}}
+  \label{eq:delay}
+\end{equation}
+
+ここで、$T_{\mathrm{prop}}$は伝搬遅延、$T_{\mathrm{trans}}$は送信遅延、
+$T_{\mathrm{queue}}$はキューイング遅延である。

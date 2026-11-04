@@ -8,3 +8,6 @@ $lualatex = 'lualatex -synctex=1 -interaction=nonstopmode -file-line-error -halt
 
 # 生成物の出力先
 $out_dir = 'output';
+
+# 独自パッケージ（src/portfolio.sty）を探索パスに追加
+ensure_path('TEXINPUTS', './src//');
