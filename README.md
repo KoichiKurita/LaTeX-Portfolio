@@ -26,21 +26,36 @@ latex-portfolio/
 
 ---
 
-## 🚀 Build (Windows PowerShell)
+## 🚀 Build
 
-```powershell
-latexmk -lualatex -interaction=nonstopmode -file-line-error -outdir=output src/main.tex
-```
+### Dev Container（推奨）
+
+1. Docker Desktop と VS Code（拡張機能：Dev Containers）をインストール
+2. リポジトリを開き、`Dev Containers: Reopen in Container` を実行
+3. ターミナルで `make` を実行 → `output/main.pdf` が生成されます
+
+| コマンド | 内容 |
+|---|---|
+| `make` | PDF をビルド |
+| `make watch` | 変更を監視して自動ビルド |
+| `make clean` | 生成物を削除 |
 
 ---
 
-## 🛠 Makefile Usage
+## 🌿 Branch Strategy
 
-### Build
-
-```powershell
-make
 ```
+<type>/<issue>-<desc> ──(Squash)──> develop ──(Merge commit)──> main ──> Pages / Release
+```
+
+| ブランチ | 役割 |
+|---|---|
+| `main` | 公開版（保護） |
+| `develop` | 統合（保護） |
+| `feature/` `fix/` `docs/` `ci/` `chore/` | 1 Issue = 1 ブランチ |
+
+- コミットメッセージは [Conventional Commits](https://www.conventionalcommits.org/) に準拠
+- Issue は Milestone（Step 単位）で管理
 
 ### Watch (auto build)
 
