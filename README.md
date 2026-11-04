@@ -94,6 +94,7 @@ make clean
 - `GITHUB_TOKEN` は既定で `contents: read`、必要なジョブにのみ書き込み権限を付与
 - Pages は OIDC による公式デプロイ（`actions/deploy-pages`）
 - `build` の成功をマージの必須条件に設定
+- サードパーティのアクションはコミット SHA で固定し、Dependabot で週次更新
 
 ---
 
