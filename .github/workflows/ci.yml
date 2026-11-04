@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+# ワークフロー全体の既定は読み取り専用（最小権限の原則）
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false   # 認証情報をワークスペースに残さない
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: src/main.tex
+          latexmk_use_lualatex: true
+          args: -interaction=nonstopmode -file-line-error -halt-on-error -outdir=output
+
+      - name: Check unresolved references
+        run: |
+          if grep -E "LaTeX Warning: (Reference|Citation) .* undefined" output/main.log; then
+            echo "::error::未解決の参照・引用があります"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: main-pdf
+          path: output/main.pdf
+          retention-days: 30
+
+  deploy-pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    # ジョブ単位の permissions はワークフロー既定を「上書き」するため、
+    # checkout に必要な contents: read も明示する
+    permissions:
+      contents: read
+      pages: write        # Pages へのデプロイ
+      id-token: write     # OIDC 認証（長期トークン不要）
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: main-pdf
+          path: site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: main-pdf
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: main.pdf
+          generate_release_notes: true   # マージした PR からリリースノートを自動生成
