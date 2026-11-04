@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -74,11 +75,11 @@ jobs:
         uses: actions/deploy-pages@v4
 
   release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # Release 作成に必要な権限だけ付与
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -86,6 +87,5 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          name: Latest Build
           files: main.pdf
+          generate_release_notes: true   # マージした PR からリリースノートを自動生成
