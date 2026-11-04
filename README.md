@@ -21,7 +21,7 @@ latex-portfolio/
 │  └─ tcp_udp.png
 ├─ output/     # Generated files (PDF, aux, log, etc.)
 ├─ Makefile
-└─ .github/workflows/build.yml
+└─ .github/workflows/ci.yml
 ```
 
 ---
@@ -82,10 +82,18 @@ make clean
 
 ---
 
-## 🤖 Continuous Integration (GitHub Actions)
+## 🤖 CI/CD (GitHub Actions)
 
-- Push to `main` branch triggers automatic PDF build.
-- The generated PDF is available in GitHub Actions Artifacts.
+| トリガー | 実行内容 |
+|---|---|
+| Pull Request | build（PDF ビルド・未解決参照チェック） |
+| `main` への push | build → GitHub Pages へデプロイ |
+| `v*` タグの push | build → GitHub Release を作成（PDF 添付・リリースノート自動生成） |
+
+- 1回のビルド成果物を後続ジョブで使い回す構成
+- `GITHUB_TOKEN` は既定で `contents: read`、必要なジョブにのみ書き込み権限を付与
+- Pages は OIDC による公式デプロイ（`actions/deploy-pages`）
+- `build` の成功をマージの必須条件に設定
 
 ---
 
