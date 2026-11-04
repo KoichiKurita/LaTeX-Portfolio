@@ -4,6 +4,7 @@
 # ==========================
 
 SRC    := src/main.tex
+STY    := src/portfolio.sty
 OUTDIR := output
 PDF    := $(OUTDIR)/main.pdf
 
@@ -18,7 +19,7 @@ export SOURCE_DATE_EPOCH
 export FORCE_SOURCE_DATE := 1
 endif
 
-.PHONY: all build watch clean checksum
+.PHONY: all build watch checksum clean lint lint-tex check
 
 all: build
 
@@ -30,6 +31,18 @@ watch:
 
 checksum: build
 	sha256sum $(PDF)
+
+# --------------------------
+# 品質ゲート（CI も make check を実行）
+# --------------------------
+check: lint build
+
+lint: lint-tex
+
+# LaTeX の静的解析
+# -n24: \section 直後の改行＋\label を「余分な空白」と誤検知するため無効化
+lint-tex:
+	chktex -q -n24 $(SRC) $(STY)
 
 clean:
 	latexmk -C $(SRC)
