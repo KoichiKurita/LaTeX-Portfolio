@@ -1,49 +1,33 @@
 # ==========================
 # LaTeX Portfolio Makefile
+# ビルド設定は .latexmkrc に集約
 # ==========================
 
-LATEXMK=latexmk
-SRC=src/main.tex
-OUTDIR=output
-PDF=$(OUTDIR)/main.pdf
+SRC    := src/main.tex
+OUTDIR := output
+PDF    := $(OUTDIR)/main.pdf
 
-# Default target
+# 再現可能ビルド：最終コミットの時刻をビルド時刻として使う
+# （CI などで環境変数が渡された場合はそちらを優先）
+SOURCE_DATE_EPOCH ?= $(shell git log -1 --format=%ct 2>/dev/null)
+ifneq ($(SOURCE_DATE_EPOCH),)
+export SOURCE_DATE_EPOCH
+export FORCE_SOURCE_DATE := 1
+endif
+
+.PHONY: all build watch clean checksum
+
+checksum: build
+	sha256sum $(PDF)
+
 all: build
 
-# --------------------------
-# Build PDF
-# --------------------------
 build:
-	@echo "=== Building LaTeX document ==="
-	@mkdir -p $(OUTDIR)
-	$(LATEXMK) -lualatex \
-	-synctex=1 \
-	-interaction=nonstopmode \
-	-file-line-error \
-	-outdir=$(OUTDIR) \
-	$(SRC)
-	@echo "=== Build complete ==="
-	@echo "Output: $(PDF)"
+	latexmk $(SRC)
 
-# --------------------------
-# Watch mode (auto build)
-# --------------------------
 watch:
-	@mkdir -p $(OUTDIR)
-	$(LATEXMK) -pvc -lualatex \
-	-interaction=nonstopmode \
-	-file-line-error \
-	-outdir=$(OUTDIR) \
-	$(SRC)
+	latexmk -pvc -view=none $(SRC)
 
-# --------------------------
-# Clean generated files
-# --------------------------
 clean:
-	@echo "=== Cleaning output directory ==="
-	$(LATEXMK) -C
-	rm -rf $(OUTDIR)/*
-	rm -f src/*.aux src/*.log src/*.toc
-	@echo "=== Clean complete ==="
-
-.PHONY: all build watch clean
+	latexmk -C $(SRC)
+	rm -rf $(OUTDIR)

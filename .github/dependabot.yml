@@ -26,3 +26,13 @@ updates:
       timezone: Asia/Tokyo
     commit-message:
       prefix: chore
+
+  # Dev Container のベースイメージ（Dockerfile のダイジェストを更新）
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    target-branch: develop
+    schedule:
+      interval: monthly
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: chore
