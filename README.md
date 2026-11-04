@@ -79,6 +79,10 @@ make clean
 - Multi-file structured document
 - Output files isolated in `/output`
 - GitHub Actions CI enabled
+- jlreq による日本語組版（JLReq / JIS X 4051 準拠）
+- 共通設定を独自パッケージ `portfolio.sty` に分離
+- hyperref / cleveref による相互参照と PDF メタデータ
+- biblatex + biber による参考文献管理（IEEE スタイル）
 
 ---
 
