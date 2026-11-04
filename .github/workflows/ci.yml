@@ -18,18 +18,29 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          persist-credentials: false   # 認証情報をワークスペースに残さない
+          persist-credentials: false
+          # PR では一時的なマージコミットではなく、ブランチの先頭コミットをビルドする
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
-      - name: Compile LaTeX
-        uses: xu-cheng/latex-action@6549dc21effb2730855a1281407ecfcececc6c1b # v4.1.0
+      # 再現可能ビルド：最終コミットの時刻をコンテナに渡す
+      - name: Set SOURCE_DATE_EPOCH
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+          git log -1 --format='Commit: %H%nDate:   %ci (%ct)'
+
+      # ローカルと同じ .devcontainer でコンテナを作り、その中でビルド
+      - name: Build in Dev Container
+        uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
         with:
-          root_file: src/main.tex
-          latexmk_use_lualatex: true
-          args: -interaction=nonstopmode -file-line-error -halt-on-error -outdir=output
+          imageName: ghcr.io/koichikurita/latex-portfolio-devcontainer
+          push: never
+          env: |
+            SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
+          runCmd: make build
 
       - name: Check unresolved references
         run: |
@@ -37,6 +48,17 @@ jobs:
             echo "::error::未解決の参照・引用があります"
             exit 1
           fi
+
+      - name: Checksum
+        run: |
+          {
+            echo "### PDF SHA-256"
+            echo "- Commit: \`$(git rev-parse --short HEAD)\`"
+            echo "- SOURCE_DATE_EPOCH: \`${SOURCE_DATE_EPOCH}\`"
+            echo '```'
+            sha256sum output/main.pdf
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

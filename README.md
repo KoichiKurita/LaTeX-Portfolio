@@ -90,6 +90,9 @@ make clean
 | `main` への push | build → GitHub Pages へデプロイ |
 | `v*` タグの push | build → GitHub Release を作成（PDF 添付・リリースノート自動生成） |
 
+- ビルドはローカルと同じ Dev Container 内で実行（`devcontainers/ci`）
+- TeX Live イメージはダイジェストで固定し、`SOURCE_DATE_EPOCH` により再現可能ビルドを実現
+- PDF の SHA-256 を Job Summary に出力（ローカルの `make checksum` と照合可能）
 - 1回のビルド成果物を後続ジョブで使い回す構成
 - `GITHUB_TOKEN` は既定で `contents: read`、必要なジョブにのみ書き込み権限を付与
 - Pages は OIDC による公式デプロイ（`actions/deploy-pages`）
