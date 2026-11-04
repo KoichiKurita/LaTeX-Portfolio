@@ -19,6 +19,10 @@
 \RequirePackage{makeidx}
 \makeindex
 
+% ---------- 参考文献 ----------
+\RequirePackage[backend=biber,style=ieee]{biblatex}
+\addbibresource{src/references.bib}
+
 % ---------- ハイパーリンク・PDF メタデータ ----------
 % hyperref は他のパッケージの設定を書き換えるため、原則として最後の方で読み込む
 \RequirePackage[pdfusetitle]{hyperref}   % \title と \author を PDF のプロパティに設定
