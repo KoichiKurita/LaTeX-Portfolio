@@ -1,0 +1,28 @@
+version: 2
+updates:
+  # GitHub Actions（ci.yml の SHA とコメントを更新）
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop        # ブランチ戦略に合わせて develop 宛てに PR を作る
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:             # 複数の更新を1つの PR にまとめる
+        patterns: ["*"]
+
+  # Dev Container の Features（devcontainer-lock.json を更新）
+  - package-ecosystem: devcontainers
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: chore
