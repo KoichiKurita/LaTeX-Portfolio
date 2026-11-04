@@ -1,49 +1,22 @@
 # ==========================
 # LaTeX Portfolio Makefile
+# ビルド設定は .latexmkrc に集約
 # ==========================
 
-LATEXMK=latexmk
-SRC=src/main.tex
-OUTDIR=output
-PDF=$(OUTDIR)/main.pdf
-
-# Default target
-all: build
-
-# --------------------------
-# Build PDF
-# --------------------------
-build:
-	@echo "=== Building LaTeX document ==="
-	@mkdir -p $(OUTDIR)
-	$(LATEXMK) -lualatex \
-	-synctex=1 \
-	-interaction=nonstopmode \
-	-file-line-error \
-	-outdir=$(OUTDIR) \
-	$(SRC)
-	@echo "=== Build complete ==="
-	@echo "Output: $(PDF)"
-
-# --------------------------
-# Watch mode (auto build)
-# --------------------------
-watch:
-	@mkdir -p $(OUTDIR)
-	$(LATEXMK) -pvc -lualatex \
-	-interaction=nonstopmode \
-	-file-line-error \
-	-outdir=$(OUTDIR) \
-	$(SRC)
-
-# --------------------------
-# Clean generated files
-# --------------------------
-clean:
-	@echo "=== Cleaning output directory ==="
-	$(LATEXMK) -C
-	rm -rf $(OUTDIR)/*
-	rm -f src/*.aux src/*.log src/*.toc
-	@echo "=== Clean complete ==="
+SRC    := src/main.tex
+OUTDIR := output
+PDF    := $(OUTDIR)/main.pdf
 
 .PHONY: all build watch clean
+
+all: build
+
+build:
+	latexmk $(SRC)
+
+watch:
+	latexmk -pvc -view=none $(SRC)
+
+clean:
+	latexmk -C $(SRC)
+	rm -rf $(OUTDIR)
