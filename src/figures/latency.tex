@@ -1,0 +1,36 @@
+% !TEX root = ../main.tex
+% ==========================================
+% 図：遅延の内訳（data/latency.csv から描画）
+% ==========================================
+\pgfplotstableread[col sep=comma]{data/latency.csv}\latencytable%
+% 合計列を CSV から計算して追加
+\pgfplotstablecreatecol[
+  create col/expr={\thisrow{handshake} + \thisrow{prop} + \thisrow{trans} + \thisrow{queue}}
+]{total}\latencytable%
+\begin{tikzpicture}
+  \begin{axis}[
+      ybar stacked,
+      bar width=14mm,
+      width=0.75\linewidth,
+      height=60mm,
+      ymin=0, ymax=24,
+      enlarge x limits=0.5,
+      xtick=data,
+      xticklabels from table={\latencytable}{protocol},
+      ylabel={遅延 [ms]},
+      legend style={at={(1.03,0.5)}, anchor=west, font=\small, draw=none},
+      legend cell align=left,
+      reverse legend,
+    ]
+    \addplot+[fill=gray!40,      draw=black] table[x expr=\coordindex, y=handshake]{\latencytable};
+    \addplot+[fill=blue!35,      draw=black] table[x expr=\coordindex, y=prop]{\latencytable};
+    \addplot+[fill=orange!60,    draw=black] table[x expr=\coordindex, y=trans]{\latencytable};
+    \addplot+[
+        fill=green!35, draw=black,
+        nodes near coords={\pgfmathprintnumber[fixed, precision=2]{\pgfplotspointmeta}\,ms},
+        point meta=explicit,
+        every node near coord/.append style={font=\small, anchor=south},
+      ] table[x expr=\coordindex, y=queue, meta=total]{\latencytable};
+    \legend{接続確立, 伝搬遅延, 送信遅延, キューイング遅延}
+  \end{axis}
+\end{tikzpicture}

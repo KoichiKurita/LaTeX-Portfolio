@@ -41,30 +41,6 @@ TCPはデータを送る前に、3ウェイハンドシェイクで接続を確�
 \label{fig:sequence}
 \end{figure}
 
-\subsection{遅延グラフ}
-\label{sec:latency}
-
-TCPとUDPの遅延の比較を\cref{fig:latency}に示す。
-
-% textlint-disable
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-ybar,
-symbolic x coords={TCP,UDP},
-xtick=data,
-ylabel={遅延(ms)},
-nodes near coords
-]
-\addplot coordinates {(TCP,50) (UDP,20)};
-\end{axis}
-\end{tikzpicture}
-\caption{遅延比較}
-\label{fig:latency}
-\end{figure}
-% textlint-enable
-
 \section{数式モデル}
 \label{sec:model}
 
@@ -77,3 +53,43 @@ nodes near coords
 
 ここで、$T_{\mathrm{prop}}$は伝搬遅延、$T_{\mathrm{trans}}$は送信遅延、
 $T_{\mathrm{queue}}$はキューイング遅延である。
+
+\subsection{計算例}
+\label{sec:latency}
+
+\Cref{tab:conditions}の条件で\cref{eq:delay}を計算した。
+遅延の内訳を\cref{fig:latency}に示す。
+伝搬遅延は距離を伝搬速度で割った値、送信遅延はパケットサイズを帯域幅で割った値である。
+TCPは接続確立のためにSYNとSYN+ACKの1往復が加わる。
+
+% textlint-disable
+\begin{table}[htbp]
+\centering
+\caption{遅延の計算条件}
+\label{tab:conditions}
+\begin{tabular}{ll}
+\toprule
+項目 & 値 \\
+\midrule
+通信距離 & 1{,}000\,km \\
+伝搬速度 & $2 \times 10^{8}$\,m/s（光ファイバ中の目安） \\
+帯域幅 & 100\,Mbit/s \\
+データパケット & 1{,}500\,バイト \\
+制御パケット（SYNなど） & 60\,バイト \\
+キューイング遅延 & 1\,ms（仮定） \\
+\bottomrule
+\end{tabular}
+\end{table}
+% textlint-enable
+
+計算の結果、UDPの遅延は片道分の6.12\,msである。
+TCPは接続確立の12.01\,msが加わり、合計18.13\,msとなる。
+なお、これらはモデルによる計算値であり、実測値ではない。
+グラフは\texttt{data/latency.csv}の値から描画している。
+
+\begin{figure}[htbp]
+\centering
+\input{src/figures/latency}
+\caption{遅延の内訳（モデルによる計算値）}
+\label{fig:latency}
+\end{figure}
