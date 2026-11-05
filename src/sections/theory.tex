@@ -46,9 +46,9 @@ TCPはデータを送る前に、3ウェイハンドシェイクで接続を確�
 
 TCPとUDPの遅延の比較を\cref{fig:latency}に示す。
 
+% textlint-disable
 \begin{figure}[htbp]
 \centering
-% textlint-disable
 \begin{tikzpicture}
 \begin{axis}[
 ybar,
@@ -60,10 +60,10 @@ nodes near coords
 \addplot coordinates {(TCP,50) (UDP,20)};
 \end{axis}
 \end{tikzpicture}
-% textlint-enable
 \caption{遅延比較}
 \label{fig:latency}
 \end{figure}
+% textlint-enable
 
 \section{数式モデル}
 \label{sec:model}
