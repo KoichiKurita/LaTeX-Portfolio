@@ -2,7 +2,8 @@
   "name": "LaTeX Portfolio",
   "build": { "dockerfile": "Dockerfile" },
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
   },
   "customizations": {
     "vscode": {
@@ -11,7 +12,8 @@
         "editorconfig.editorconfig",
         "github.vscode-pull-request-github",
         "github.vscode-github-actions",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "3w36zj6.textlint"
       ],
       "settings": {
         "files.encoding": "utf8",

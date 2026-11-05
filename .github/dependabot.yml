@@ -36,3 +36,18 @@ updates:
       timezone: Asia/Tokyo
     commit-message:
       prefix: chore
+
+  # 文章校正ツール（package.json / package-lock.json）
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: chore
+    groups:
+      textlint:
+        patterns: ["textlint*"]
