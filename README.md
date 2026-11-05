@@ -83,6 +83,7 @@ make clean
 - 共通設定を独自パッケージ `portfolio.sty` に分離
 - hyperref / cleveref による相互参照と PDF メタデータ
 - biblatex + biber による参考文献管理（IEEE スタイル）
+- 品質ゲート `make check`（chktex / textlint / フォント埋め込み検査）を CI で実行
 
 ---
 
