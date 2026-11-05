@@ -20,7 +20,7 @@ export SOURCE_DATE_EPOCH
 export FORCE_SOURCE_DATE := 1
 endif
 
-.PHONY: all build watch checksum clean lint lint-tex lint-text check
+.PHONY: all build watch checksum clean lint lint-tex lint-text check-pdf check
 
 all: build
 
@@ -36,7 +36,7 @@ checksum: build
 # --------------------------
 # 品質ゲート（CI も make check を実行）
 # --------------------------
-check: lint build
+check: lint check-pdf
 
 lint: lint-tex lint-text
 
@@ -53,6 +53,13 @@ node_modules: package.json package-lock.json
 lint-text: node_modules
 	npx textlint $(TEXT)
 
+# PDF のフォント埋め込みチェック（未埋め込みがあれば失敗）
+check-pdf: build
+	@echo "=== フォント埋め込みチェック: $(PDF) ==="
+	@pdffonts $(PDF)
+	@pdffonts $(PDF) | awk 'NR > 2 && $$(NF-4) != "yes" { print "未埋め込みのフォント: " $$1; bad = 1 } END { exit bad }'
+	@echo "OK: すべてのフォントが埋め込まれています"
+	
 clean:
 	latexmk -C $(SRC)
 	rm -rf $(OUTDIR)
