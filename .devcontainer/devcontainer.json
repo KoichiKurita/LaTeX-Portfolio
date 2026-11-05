@@ -1,6 +1,10 @@
 {
   "name": "LaTeX Portfolio",
   "build": { "dockerfile": "Dockerfile" },
+  // 最小権限：root ではなく一般ユーザーで作業する
+  "remoteUser": "texlive",
+  // ホスト（WSL）のユーザーと UID/GID を合わせ、ファイル所有者のずれを防ぐ
+  "updateRemoteUserUID": true,
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/devcontainers/features/node:2": { "version": "lts" }
