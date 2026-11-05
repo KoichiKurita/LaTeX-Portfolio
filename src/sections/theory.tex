@@ -8,7 +8,7 @@
 
 TCPとUDPの主な違いを\cref{tab:tcp-udp}に示す。
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{TCPとUDPの比較}
 \label{tab:tcp-udp}
@@ -25,16 +25,20 @@ TCPとUDPの主な違いを\cref{tab:tcp-udp}に示す。
 % textlint-enable
 \end{table}
 
-\subsection{通信イメージ図}
-\label{sec:image}
+\subsection{通信の流れ}
+\label{sec:flow}
 
-TCPとUDPの通信の流れを\cref{fig:tcp-udp}に示す。
+TCPとUDPの通信の流れを\cref{fig:sequence}に示す。
+TCPはデータを送る前に、3ウェイハンドシェイクで接続を確立する。
+クライアントはSYNを送り、サーバからSYN+ACKを受け取ると、ACKと同時にデータの送信を開始する。
+そのため、データがサーバに届くまでに約1.5往復分の時間がかかる。
+一方、UDPは接続を確立せずにデータを送るため、片道分の時間で届く。
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.7\linewidth]{tcp_udp.png}
-\caption{TCPとUDP通信イメージ}
-\label{fig:tcp-udp}
+\input{src/figures/sequence}
+\caption{TCPとUDPの通信シーケンス}
+\label{fig:sequence}
 \end{figure}
 
 \subsection{遅延グラフ}
@@ -42,7 +46,7 @@ TCPとUDPの通信の流れを\cref{fig:tcp-udp}に示す。
 
 TCPとUDPの遅延の比較を\cref{fig:latency}に示す。
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 % textlint-disable
 \begin{tikzpicture}

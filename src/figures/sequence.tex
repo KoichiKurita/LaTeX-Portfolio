@@ -1,0 +1,41 @@
+% !TEX root = ../main.tex
+% ==========================================
+% 図：TCP と UDP の通信シーケンス
+% ==========================================
+\begin{tikzpicture}[
+    font=\small,
+    x=0.95cm,
+    node/.style={draw, minimum width=16mm, minimum height=6mm, fill=gray!10},
+    msg/.style={-{Stealth[length=2mm]}, thick},
+    data/.style={msg, blue!60!black},
+    lbl/.style={font=\scriptsize, fill=white, inner sep=1pt},
+  ]
+  % ---------- TCP ----------
+  \node[font=\bfseries] at (2, 0.8) {TCP};
+  \node[node] (tc) at (0, 0) {クライアント};
+  \node[node] (ts) at (4, 0) {サーバ};
+  \draw[gray] (tc.south) -- ++(0, -5.6);
+  \draw[gray] (ts.south) -- ++(0, -5.6);
+  \draw[msg]  (0, -0.8) -- node[lbl, sloped, above] {SYN}           (4, -1.6);
+  \draw[msg]  (4, -1.8) -- node[lbl, sloped, above] {SYN+ACK}       (0, -2.6);
+  \draw[data] (0, -2.8) -- node[lbl, sloped, above] {ACK+データ}    (4, -3.6);
+  \draw[msg]  (4, -3.8) -- node[lbl, sloped, above] {ACK}           (0, -4.6);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}]
+    (-0.25, -0.8) -- node[left=5pt, align=right, font=\scriptsize] {接続確立\\（1往復）} (-0.25, -2.6);
+  \draw[decorate, decoration={brace, amplitude=4pt}]
+    (4.25, -0.8) -- node[right=5pt, align=left, font=\scriptsize] {データ\\到着まで\\約1.5往復} (4.25, -3.6);
+
+  % ---------- UDP ----------
+  \node[font=\bfseries] at (9.5, 0.8) {UDP};
+  \node[node] (uc) at (7.5, 0) {クライアント};
+  \node[node] (us) at (11.5, 0) {サーバ};
+  \draw[gray] (uc.south) -- ++(0, -5.6);
+  \draw[gray] (us.south) -- ++(0, -5.6);
+  \draw[data] (7.5, -0.8) -- node[lbl, sloped, above] {データ} (11.5, -1.6);
+  \draw[decorate, decoration={brace, amplitude=4pt}]
+    (11.75, -0.8) -- node[right=5pt, align=left, font=\scriptsize] {データ\\到着まで\\片道のみ} (11.75, -1.6);
+
+  % ---------- 時間軸 ----------
+  \draw[-{Stealth}, gray] (-1.9, -0.6) -- (-1.9, -5.4);
+  \node[gray, font=\scriptsize, above] at (-1.9, -0.6) {時間};
+\end{tikzpicture}
