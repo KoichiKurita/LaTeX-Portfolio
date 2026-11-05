@@ -12,6 +12,7 @@ TCPとUDPの主な違いを\cref{tab:tcp-udp}に示す。
 \centering
 \caption{TCPとUDPの比較}
 \label{tab:tcp-udp}
+% textlint-disable
 \begin{tabular}{lcc}
 \toprule
 項目 & TCP & UDP \\
@@ -21,6 +22,7 @@ TCPとUDPの主な違いを\cref{tab:tcp-udp}に示す。
 遅延 & 高 & 低 \\
 \bottomrule
 \end{tabular}
+% textlint-enable
 \end{table}
 
 \subsection{通信イメージ図}
@@ -42,6 +44,7 @@ TCPとUDPの遅延の比較を\cref{fig:latency}に示す。
 
 \begin{figure}[H]
 \centering
+% textlint-disable
 \begin{tikzpicture}
 \begin{axis}[
 ybar,
@@ -53,6 +56,7 @@ nodes near coords
 \addplot coordinates {(TCP,50) (UDP,20)};
 \end{axis}
 \end{tikzpicture}
+% textlint-enable
 \caption{遅延比較}
 \label{fig:latency}
 \end{figure}

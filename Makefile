@@ -5,6 +5,7 @@
 
 SRC    := src/main.tex
 STY    := src/portfolio.sty
+TEXT   := src/sections/*.tex
 OUTDIR := output
 PDF    := $(OUTDIR)/main.pdf
 
@@ -19,7 +20,7 @@ export SOURCE_DATE_EPOCH
 export FORCE_SOURCE_DATE := 1
 endif
 
-.PHONY: all build watch checksum clean lint lint-tex check
+.PHONY: all build watch checksum clean lint lint-tex lint-text check
 
 all: build
 
@@ -37,12 +38,20 @@ checksum: build
 # --------------------------
 check: lint build
 
-lint: lint-tex
+lint: lint-tex lint-text
 
 # LaTeX の静的解析
 # -n24: \section 直後の改行＋\label を「余分な空白」と誤検知するため無効化
 lint-tex:
 	chktex -q -n24 $(SRC) $(STY)
+
+# 日本語の文章校正（依存パッケージは package-lock.json で固定）
+node_modules: package.json package-lock.json
+	npm ci
+	@touch $@
+
+lint-text: node_modules
+	npx textlint $(TEXT)
 
 clean:
 	latexmk -C $(SRC)
