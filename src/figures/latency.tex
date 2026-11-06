@@ -7,7 +7,7 @@
 \pgfplotstablecreatecol[
   create col/expr={\thisrow{handshake} + \thisrow{prop} + \thisrow{trans} + \thisrow{queue}}
 ]{total}\latencytable%
-\begin{tikzpicture}
+\begin{tikzpicture}[alt={TCPとUDPの遅延の内訳を示す積み上げ棒グラフ。UDPは伝搬遅延5.00ms、送信遅延0.12ms、キューイング遅延1.00msの合計6.12ms。TCPはこれに接続確立の12.01msが加わり、合計18.13ms。}]
   \begin{axis}[
       ybar stacked,
       bar width=14mm,
