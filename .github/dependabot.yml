@@ -51,3 +51,13 @@ updates:
     groups:
       textlint:
         patterns: ["textlint*"]
+
+  # PDF/A 検証ツール（veraPDF）のイメージ
+  - package-ecosystem: docker
+    directory: /.github/verapdf
+    target-branch: develop
+    schedule:
+      interval: monthly
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: ci
