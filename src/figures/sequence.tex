@@ -3,6 +3,7 @@
 % 図：TCP と UDP の通信シーケンス
 % ==========================================
 \begin{tikzpicture}[
+    alt={TCPとUDPの通信シーケンス図。TCPはSYN、SYN+ACK、ACKとデータの順にやり取りし、データがサーバに届くまで約1.5往復かかる。UDPはデータを1回送るだけで、片道の時間で届く。},
     font=\small,
     x=0.95cm,
     node/.style={draw, minimum width=16mm, minimum height=6mm, fill=gray!10},

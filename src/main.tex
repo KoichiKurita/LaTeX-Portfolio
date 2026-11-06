@@ -1,4 +1,4 @@
-\DocumentMetadata{pdfstandard=a-2b, lang=ja-JP, tagging=off}
+\DocumentMetadata{pdfstandard=a-3b, pdfstandard=ua-1, lang=ja-JP, tagging=on}
 
 % --- jlreq の不具合の回避策 -------------------------------------------
 % \DocumentMetadata（TeX Live 2026）で latex-lab が先に読み込まれると、
@@ -15,6 +15,17 @@
 % 共通設定（src/portfolio.sty）
 \usepackage{portfolio}
 
+% 数式の MathML 生成（luamml）は使わない
+% （unicode-math への切り替えが必要で、数式フォントの変更と jlreq との相性リスクがあるため）
+% タグ付けの設定
+\tagpdfsetup{
+  % 数式の MathML 生成（luamml）は使わない
+  % （unicode-math への切り替えが必要で、数式フォントの変更と jlreq との相性リスクがあるため）
+  math/mathml/luamml/load=false,
+  % 代わりに、数式の LaTeX ソースを読み上げ用の代替テキストとして使う（PDF/UA 7.7）
+  math/alt/use=true,
+}
+
 % バージョン情報（make が output/version.tex を生成。無い場合は既定値）
 \IfFileExists{output/version.tex}{%
   \input{output/version.tex}% chktex 27 （lint 時点では未生成のため）
@@ -28,7 +39,7 @@
 \title{\doctitle}
 \author{\docauthor}
 % PDF のプロパティ（PDF/A の XMP メタデータにも反映される）
-\hypersetup{pdftitle={\doctitle}, pdfauthor={\docauthor}}
+\hypersetup{pdftitle={\doctitle}, pdfauthor={\docauthor}, pdfdisplaydoctitle=true}
 \date{\today\\[0.5em]{\small \docversion（\doccommit）}}
 
 \begin{document}
