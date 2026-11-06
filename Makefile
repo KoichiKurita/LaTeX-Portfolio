@@ -54,8 +54,12 @@ lint: lint-tex lint-text
 
 # LaTeX の静的解析
 # -n24: \section 直後の改行＋\label を「余分な空白」と誤検知するため無効化
+# chktex は警告の種類によって終了コードが 0 になる（例：括弧の不一致）ため、
+# 標準出力に警告が1行でもあれば失敗とする（% chktex で除外した旨のメッセージは標準エラー出力）
 lint-tex:
-	chktex -q -n24 $(SRC) $(STY)
+	@out=$$(chktex -q -n24 $(SRC) $(STY)); status=$$?; \
+	if [ -n "$$out" ]; then printf '%s\n' "$$out"; echo "chktex: 警告があります"; exit 1; fi; \
+	exit $$status
 
 # 日本語の文章校正（依存パッケージは package-lock.json で固定）
 node_modules: package.json package-lock.json
