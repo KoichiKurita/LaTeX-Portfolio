@@ -39,6 +39,13 @@ latex-portfolio/
 | `make` | PDF をビルド |
 | `make watch` | 変更を監視して自動ビルド |
 | `make clean` | 生成物を削除 |
+| `make diff` | 比較元（既定は `origin/develop`）との差分を色分けした PDF を生成 |
+
+### PDF/A の検証（Docker が使える環境：WSL など）
+```bash
+./scripts/check-pdf-standard.sh output/main.pdf 3b
+./scripts/check-pdf-standard.sh output/main.pdf ua1
+```
 
 ---
 
@@ -85,6 +92,8 @@ make clean
 - biblatex + biber による参考文献管理（IEEE スタイル）
 - 品質ゲート `make check`（chktex / textlint / フォント埋め込み検査）を CI で実行
 - 図は TikZ / pgfplots で描画（グラフは CSV から生成）、PDF にバージョンとコミットを埋め込み
+- PDF/A-3b（長期保存）と PDF/UA-1（アクセシビリティ）に準拠し、veraPDF で CI 検証
+- Tagged PDF：見出し・段落・表などに構造タグを付与し、図には代替テキストを設定
 
 ---
 
@@ -92,7 +101,7 @@ make clean
 
 | トリガー | 実行内容 |
 |---|---|
-| Pull Request | build（品質ゲート `make check`・SHA-256 の出力） |
+| Pull Request | build（品質ゲート `make check`・SHA-256 の出力）＋ 差分 PDF（Artifacts の `diff-pdf`） |
 | `main` への push | build（マージ後の状態の検証） |
 | `v*` タグの push | build → GitHub Release を作成 ＋ GitHub Pages へデプロイ（公開ページ＝最新リリース） |
 
@@ -104,6 +113,14 @@ make clean
 - Pages は OIDC による公式デプロイ（`actions/deploy-pages`）
 - `build` の成功をマージの必須条件に設定
 - サードパーティのアクションはコミット SHA で固定し、Dependabot で週次更新
+
+---
+
+## ⚠️ 既知の制約
+- jlreq の見出し・目次は、LaTeX のタグ付け機能（tagpdf）に未対応の部分があり、
+ビルド時に構造の警告（Parent-Child ... not allowed）が出る。
+PDF/UA-1 の検証には合格しているが、構造は完全ではない。
+- `\DocumentMetadata` 使用時に jlreq-complements.sty がエラーになる不具合を回避している（`src/main.tex` 参照）。
 
 ---
 
