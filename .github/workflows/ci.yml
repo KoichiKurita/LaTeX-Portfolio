@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -76,9 +76,15 @@ jobs:
           retention-days: 30
 
   deploy-pages:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    # 公開ページ＝最新リリース：タグの push 時のみデプロイする
+    # （main とタグの同時 push でデプロイが競合し、古い PDF で上書きされるのを防ぐ）
+    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    # 万一デプロイが重なっても、並列ではなく順番に実行する（実行中のものはキャンセルしない）
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     # ジョブ単位の permissions はワークフロー既定を「上書き」するため、
     # checkout に必要な contents: read も明示する
     permissions:
@@ -98,6 +104,25 @@ jobs:
           name: main-pdf
           path: site
 
+      # PDF をバージョン付きのファイル名でも配置し、index.html から参照する
+      # （GitHub Pages の CDN は URL の ?v= ではキャッシュを確実に回避できないため、ファイル名を変える）
+      # タグ名は環境変数経由で渡す（式展開を run に直接書くとスクリプト注入の恐れがあるため）
+      - name: Stamp version into index.html
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          commit="${GITHUB_SHA::7}"
+          pdf="LaTeX-Portfolio-${VERSION}.pdf"
+          cp site/main.pdf "site/${pdf}"
+          sed -i -e "s|__VERSION__|${VERSION}|g" \
+                 -e "s|__COMMIT__|${commit}|g" \
+                 -e "s|__PDF__|${pdf}|g" site/index.html
+          if grep -q "__VERSION__\|__COMMIT__\|__PDF__" site/index.html; then
+            echo "::error::index.html の置換漏れがあります"
+            exit 1
+          fi
+          ls -l site
+
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: site
@@ -108,7 +133,7 @@ jobs:
   release:
     if: startsWith(github.ref, 'refs/tags/v')
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
