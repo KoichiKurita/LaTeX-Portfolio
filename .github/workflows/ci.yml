@@ -25,11 +25,17 @@ jobs:
           persist-credentials: false
           # PR では一時的なマージコミットではなく、ブランチの先頭コミットをビルドする
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          # バージョン表示（git describe）のため、タグを含む全履歴を取得する
+          fetch-depth: 0
 
       # 再現可能ビルド：最終コミットの時刻をコンテナに渡す
-      - name: Set SOURCE_DATE_EPOCH
+      - name: Set build metadata
         run: |
-          echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+          {
+            echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)"
+            echo "DOC_VERSION=$(git describe --tags --match 'v*' --dirty --abbrev=7 2>/dev/null || echo dev)"
+            echo "DOC_COMMIT=$(git rev-parse --short=7 HEAD)"
+          } >> "$GITHUB_ENV"
           git log -1 --format='Commit: %H%nDate:   %ci (%ct)'
 
       # ローカルと同じ .devcontainer でコンテナを作り、その中でビルド
@@ -40,6 +46,8 @@ jobs:
           push: never
           env: |
             SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
+            DOC_VERSION=${{ env.DOC_VERSION }}
+            DOC_COMMIT=${{ env.DOC_COMMIT }}
           runCmd: make check
 
       - name: Check unresolved references
@@ -54,6 +62,7 @@ jobs:
           {
             echo "### PDF SHA-256"
             echo "- Commit: \`$(git rev-parse --short HEAD)\`"
+            echo "- Version: \`${DOC_VERSION}\`"
             echo "- SOURCE_DATE_EPOCH: \`${SOURCE_DATE_EPOCH}\`"
             echo '```'
             sha256sum output/main.pdf
@@ -67,7 +76,7 @@ jobs:
           retention-days: 30
 
   deploy-pages:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     needs: build
     runs-on: ubuntu-latest
     # ジョブ単位の permissions はワークフロー既定を「上書き」するため、
