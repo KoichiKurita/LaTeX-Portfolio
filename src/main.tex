@@ -3,9 +3,17 @@
 % 共通設定（src/portfolio.sty）
 \usepackage{portfolio}
 
+% バージョン情報（make が output/version.tex を生成。無い場合は既定値）
+\IfFileExists{output/version.tex}{%
+  \input{output/version.tex}% chktex 27 （lint 時点では未生成のため）
+}{%
+  \newcommand{\docversion}{dev}%
+  \newcommand{\doccommit}{unknown}%
+}
+
 \title{TCP/IPネットワーク基礎と通信性能の考察}
 \author{Koichi Kurita}
-\date{\today}
+\date{\today\\[0.5em]{\small \docversion（\doccommit）}}
 
 \begin{document}
 

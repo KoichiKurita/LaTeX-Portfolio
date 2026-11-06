@@ -13,12 +13,12 @@ https://KoichiKurita.github.io/LaTeX-Portfolio/
 latex-portfolio/
 ├─ src/        # LaTeX source files
 │  ├─ main.tex
-│  └─ sections/
-│     ├─ intro.tex
-│     ├─ theory.tex
-│     └─ conclusion.tex
-├─ images/     # Image assets
-│  └─ tcp_udp.png
+│  ├─ sections/
+│  │  ├─ intro.tex
+│  │  ├─ theory.tex
+│  │  └─ conclusion.tex
+|  └─ figures/
+├─ data/
 ├─ output/     # Generated files (PDF, aux, log, etc.)
 ├─ Makefile
 └─ .github/workflows/ci.yml
@@ -84,6 +84,7 @@ make clean
 - hyperref / cleveref による相互参照と PDF メタデータ
 - biblatex + biber による参考文献管理（IEEE スタイル）
 - 品質ゲート `make check`（chktex / textlint / フォント埋め込み検査）を CI で実行
+- 図は TikZ / pgfplots で描画（グラフは CSV から生成）、PDF にバージョンとコミットを埋め込み
 
 ---
 
