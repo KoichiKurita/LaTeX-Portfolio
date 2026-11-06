@@ -69,6 +69,20 @@ jobs:
             exit 1
           fi
 
+      # PDF/A-2b への適合を veraPDF（公式検証ツール）で検査する
+      - name: Validate PDF/A (veraPDF)
+        shell: bash   # 明示すると pipefail が有効になり、tee を挟んでも失敗を検出できる
+        run: ./scripts/check-pdfa.sh output/main.pdf 2b | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # 不合格のときは、違反した規則を確認できるようレポートを添付する
+      - name: Upload veraPDF report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verapdf-report
+          path: output/verapdf-report.xml
+          retention-days: 14
+
       - name: Checksum
         run: |
           {

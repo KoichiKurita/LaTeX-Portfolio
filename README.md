@@ -41,6 +41,11 @@ latex-portfolio/
 | `make clean` | 生成物を削除 |
 | `make diff` | 比較元（既定は `origin/develop`）との差分を色分けした PDF を生成 |
 
+### PDF/A の検証（Docker が使える環境：WSL など）
+```bash
+./scripts/check-pdfa.sh output/main.pdf 2b
+```
+
 ---
 
 ## 🌿 Branch Strategy
@@ -86,6 +91,7 @@ make clean
 - biblatex + biber による参考文献管理（IEEE スタイル）
 - 品質ゲート `make check`（chktex / textlint / フォント埋め込み検査）を CI で実行
 - 図は TikZ / pgfplots で描画（グラフは CSV から生成）、PDF にバージョンとコミットを埋め込み
+- PDF/A-2b（長期保存用の国際規格）で出力し、veraPDF で適合を CI 検証
 
 ---
 
