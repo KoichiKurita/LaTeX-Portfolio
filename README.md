@@ -92,9 +92,9 @@ make clean
 
 | トリガー | 実行内容 |
 |---|---|
-| Pull Request | build（PDF ビルド・未解決参照チェック） |
-| `main` への push | build → GitHub Pages へデプロイ |
-| `v*` タグの push | build → GitHub Release を作成（PDF 添付・リリースノート自動生成） |
+| Pull Request | build（品質ゲート `make check`・SHA-256 の出力） |
+| `main` への push | build（マージ後の状態の検証） |
+| `v*` タグの push | build → GitHub Release を作成 ＋ GitHub Pages へデプロイ（公開ページ＝最新リリース） |
 
 - ビルドはローカルと同じ Dev Container 内で実行（`devcontainers/ci`）
 - TeX Live イメージはダイジェストで固定し、`SOURCE_DATE_EPOCH` により再現可能ビルドを実現
