@@ -43,7 +43,8 @@ latex-portfolio/
 
 ### PDF/A の検証（Docker が使える環境：WSL など）
 ```bash
-./scripts/check-pdfa.sh output/main.pdf 2b
+./scripts/check-pdf-standard.sh output/main.pdf 3b
+./scripts/check-pdf-standard.sh output/main.pdf ua1
 ```
 
 ---
@@ -91,7 +92,8 @@ make clean
 - biblatex + biber による参考文献管理（IEEE スタイル）
 - 品質ゲート `make check`（chktex / textlint / フォント埋め込み検査）を CI で実行
 - 図は TikZ / pgfplots で描画（グラフは CSV から生成）、PDF にバージョンとコミットを埋め込み
-- PDF/A-2b（長期保存用の国際規格）で出力し、veraPDF で適合を CI 検証
+- PDF/A-3b（長期保存）と PDF/UA-1（アクセシビリティ）に準拠し、veraPDF で CI 検証
+- Tagged PDF：見出し・段落・表などに構造タグを付与し、図には代替テキストを設定
 
 ---
 
@@ -111,6 +113,14 @@ make clean
 - Pages は OIDC による公式デプロイ（`actions/deploy-pages`）
 - `build` の成功をマージの必須条件に設定
 - サードパーティのアクションはコミット SHA で固定し、Dependabot で週次更新
+
+---
+
+## ⚠️ 既知の制約
+- jlreq の見出し・目次は、LaTeX のタグ付け機能（tagpdf）に未対応の部分があり、
+ビルド時に構造の警告（Parent-Child ... not allowed）が出る。
+PDF/UA-1 の検証には合格しているが、構造は完全ではない。
+- `\DocumentMetadata` 使用時に jlreq-complements.sty がエラーになる不具合を回避している（`src/main.tex` 参照）。
 
 ---
 
