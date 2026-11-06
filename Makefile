@@ -25,7 +25,7 @@ DOC_VERSION ?= $(shell git describe --tags --match 'v*' --dirty --abbrev=7 2>/de
 DOC_COMMIT  ?= $(shell git rev-parse --short=7 HEAD 2>/dev/null || echo unknown)
 VERSION_TEX := $(OUTDIR)/version.tex
 
-.PHONY: all build watch checksum clean lint lint-tex lint-text check-pdf check FORCE
+.PHONY: all build watch checksum clean lint lint-tex lint-text check-pdf check diff FORCE
 
 all: build
 
@@ -75,6 +75,28 @@ check-pdf: build
 	@pdffonts $(PDF)
 	@pdffonts $(PDF) | awk 'NR > 2 && $$(NF-4) != "yes" { print "未埋め込みのフォント: " $$1; bad = 1 } END { exit bad }'
 	@echo "OK: すべてのフォントが埋め込まれています"
+
+# --------------------------
+# 差分 PDF（latexdiff）
+# 比較元（DIFF_BASE）と作業ツリーの差分を色分けした PDF を生成する
+# 例：make diff DIFF_BASE=v1.5.1
+# --------------------------
+DIFF_BASE ?= origin/develop
+DIFF_DIR  := $(OUTDIR)/diff
+# CFONT：追加は青、削除は赤の小さい文字（下線方式は和文の行分割と相性が悪いため不採用）
+# 図（tikzpicture）は中身に印を付けず、変更があれば図全体を新旧で表示する
+LATEXDIFF_OPTS := --type=CFONT --math-markup=whole \
+	--config="PICTUREENV=(?:picture|tikzpicture|DIFnomarkup)[\w\d*@]*"
+
+diff: $(VERSION_TEX)
+	rm -rf $(DIFF_DIR) && mkdir -p $(DIFF_DIR)/base
+	git archive $(DIFF_BASE) | tar -x -C $(DIFF_DIR)/base
+	cd $(DIFF_DIR)/base && latexpand --empty-comments $(SRC) > ../old.tex 2> /dev/null
+	latexpand --empty-comments $(SRC) > $(DIFF_DIR)/new.tex 2> /dev/null
+	latexdiff $(LATEXDIFF_OPTS) $(DIFF_DIR)/old.tex $(DIFF_DIR)/new.tex \
+		> $(DIFF_DIR)/diff.tex 2> $(DIFF_DIR)/latexdiff.log
+	latexmk -outdir=$(DIFF_DIR) $(DIFF_DIR)/diff.tex
+	@echo "差分 PDF: $(DIFF_DIR)/diff.pdf（$(DIFF_BASE) → 作業ツリー）"
 
 clean:
 	latexmk -C $(SRC)

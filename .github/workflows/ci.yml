@@ -30,11 +30,15 @@ jobs:
 
       # 再現可能ビルド：最終コミットの時刻をコンテナに渡す
       - name: Set build metadata
+        env:
+            BASE_REF: ${{ github.base_ref }}   # PR の比較先ブランチ（push では空）
         run: |
           {
             echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)"
             echo "DOC_VERSION=$(git describe --tags --match 'v*' --dirty --abbrev=7 2>/dev/null || echo dev)"
             echo "DOC_COMMIT=$(git rev-parse --short=7 HEAD)"
+            # PR のときだけ差分 PDF の比較元を設定する
+            if [ -n "$BASE_REF" ]; then echo "DIFF_BASE=origin/$BASE_REF"; fi
           } >> "$GITHUB_ENV"
           git log -1 --format='Commit: %H%nDate:   %ci (%ct)'
 
@@ -48,7 +52,15 @@ jobs:
             SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
             DOC_VERSION=${{ env.DOC_VERSION }}
             DOC_COMMIT=${{ env.DOC_COMMIT }}
-          runCmd: make check
+            DIFF_BASE=${{ env.DIFF_BASE }}
+          # 差分 PDF はレビュー補助のため、生成に失敗してもマージは止めない（警告のみ）
+          runCmd: |
+            set -e
+            make check
+            if [ -n "$DIFF_BASE" ]; then
+              git config --global --add safe.directory "$PWD"
+              make diff || echo "::warning::差分 PDF の生成に失敗しました"
+            fi
 
       - name: Check unresolved references
         run: |
@@ -62,6 +74,9 @@ jobs:
           {
             echo "### PDF SHA-256"
             echo "- Commit: \`$(git rev-parse --short HEAD)\`"
+            if [ -f output/diff/diff.pdf ]; then
+              echo "差分 PDF（${DIFF_BASE} → この PR）は Artifacts の **diff-pdf** からダウンロードできます。"
+            fi
             echo "- Version: \`${DOC_VERSION}\`"
             echo "- SOURCE_DATE_EPOCH: \`${SOURCE_DATE_EPOCH}\`"
             echo '```'
@@ -74,6 +89,15 @@ jobs:
           name: main-pdf
           path: output/main.pdf
           retention-days: 30
+
+      - name: Upload diff PDF
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: diff-pdf
+          path: output/diff/diff.pdf
+          retention-days: 14
+          if-no-files-found: warn
 
   deploy-pages:
     # 公開ページ＝最新リリース：タグの push 時のみデプロイする
