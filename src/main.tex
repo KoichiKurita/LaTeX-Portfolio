@@ -1,3 +1,15 @@
+\DocumentMetadata{pdfstandard=a-2b, lang=ja-JP, tagging=off}
+
+% --- jlreq の不具合の回避策 -------------------------------------------
+% \DocumentMetadata（TeX Live 2026）で latex-lab が先に読み込まれると、
+% jlreq-complements.sty が定義前の内部命令を呼んでエラーになる（217行目 → 251行目で定義）。
+% 先に空の命令として定義しておき、jlreq 自身の定義（\cs_set:Nn）で上書きさせる。
+\ExplSyntaxOn%
+\cs_if_exist:NF \__jlreq_complements_setup_amsthm_theoremstyle:
+  { \cs_new:Npn \__jlreq_complements_setup_amsthm_theoremstyle: { } }
+\ExplSyntaxOff%
+% ----------------------------------------------------------------------
+
 \documentclass[paper=a4paper,fontsize=11pt]{jlreq}
 
 % 共通設定（src/portfolio.sty）
@@ -11,8 +23,12 @@
   \newcommand{\doccommit}{unknown}%
 }
 
-\title{TCP/IPネットワーク基礎と通信性能の考察}
-\author{Koichi Kurita}
+\newcommand{\doctitle}{TCP/IPネットワーク基礎と通信性能の考察}
+\newcommand{\docauthor}{Koichi Kurita}
+\title{\doctitle}
+\author{\docauthor}
+% PDF のプロパティ（PDF/A の XMP メタデータにも反映される）
+\hypersetup{pdftitle={\doctitle}, pdfauthor={\docauthor}}
 \date{\today\\[0.5em]{\small \docversion（\doccommit）}}
 
 \begin{document}
