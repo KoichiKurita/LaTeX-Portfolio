@@ -39,6 +39,7 @@ latex-portfolio/
 | `make` | PDF をビルド |
 | `make watch` | 変更を監視して自動ビルド |
 | `make clean` | 生成物を削除 |
+| `make diff` | 比較元（既定は `origin/develop`）との差分を色分けした PDF を生成 |
 
 ---
 
@@ -92,7 +93,7 @@ make clean
 
 | トリガー | 実行内容 |
 |---|---|
-| Pull Request | build（品質ゲート `make check`・SHA-256 の出力） |
+| Pull Request | build（品質ゲート `make check`・SHA-256 の出力）＋ 差分 PDF（Artifacts の `diff-pdf`） |
 | `main` への push | build（マージ後の状態の検証） |
 | `v*` タグの push | build → GitHub Release を作成 ＋ GitHub Pages へデプロイ（公開ページ＝最新リリース） |
 
